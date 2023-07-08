@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
-from .models import User
+
+User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     """
@@ -12,18 +14,24 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("id", "username", "email")
 
-class UserRegisterationSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer class to serialize registration requests and create a new user.
     """
-
+    password = serializers.CharField(
+        max_length=128,
+        min_length=8,
+        write_only=True,
+        style={"input_type": "password"}
+    )
     class Meta:
         model = User
         fields = ("id", "username", "email", "password")
+        read_only_fields = ("id", "is_staff")
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        return CustomUser.objects.create_user(**validated_data)
+        return User.objects.create_user(**validated_data)
 
 class UserLoginSerializer(serializers.Serializer):
     """

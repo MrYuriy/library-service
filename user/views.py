@@ -11,13 +11,14 @@ from . import serializers
 
 User = get_user_model()
 
-class UserRegisterationAPIView(GenericAPIView):
+
+class UserRegistrationAPIView(GenericAPIView):
     """
     An endpoint for the client to create a new User.
     """
 
     permission_classes = (AllowAny,)
-    serializer_class = serializers.UserRegisterationSerializer
+    serializer_class = serializers.UserRegistrationSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
