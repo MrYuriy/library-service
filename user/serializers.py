@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer class to serialize CustomUser model.
     """
-
+    
     class Meta:
         model = User
         fields = ("id", "username", "email")
@@ -33,6 +33,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+
+
 class UserLoginSerializer(serializers.Serializer):
     """
     Serializer class to authenticate users with email and password.
@@ -46,4 +57,3 @@ class UserLoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
-

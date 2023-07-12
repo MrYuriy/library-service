@@ -41,7 +41,7 @@ class UserLoginAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        serializer = serializers.CustomUserSerializer(user)
+        serializer = serializers.UserSerializer(user)
         token = RefreshToken.for_user(user)
         data = serializer.data
         data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
@@ -56,8 +56,10 @@ class UserLogoutAPIView(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
+
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
+
             token.blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
