@@ -7,5 +7,5 @@ from books.serializers import BookSerializer
 
 class BookViewSet(ModelViewSet):
     authentication_classes = (IsAuthenticated,)
-    serializer_class = BookSerializer
     queryset = Book.objects.all()
+    serializer_class = BookSerializer

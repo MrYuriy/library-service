@@ -7,10 +7,4 @@ class BookSerializer(serializers.ModelSerializer):
     cover = serializers.ChoiceField(choices=[(cover.name, cover.value) for cover in BookCover])
     class Meta:
         model = Book
-        fielsd = (
-            "title",
-            "author",
-            "cover",
-            "inventory",
-            "dayly_fee"
-        )
+        fields = "__all__"
