@@ -1,3 +1,13 @@
 from django.db import models
+from books.models import Book
+from library_service import settings
 
-# Create your models here.
+class Borrowing(models.Model):
+    borrow_date = models.DateField()
+    extend_return = models.DateField()
+    actual_return = models.DateField(null=True, blank=True)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Borrowing: {self.book.title} by User: {self.user.email}"
