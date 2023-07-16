@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.test import TestCase, RequestFactory
 from rest_framework.test import force_authenticate
 from books.models import Book
@@ -7,10 +7,12 @@ from books.views import BookViewSet
 from decimal import Decimal
 import json
 
+User = get_user_model()
+
 class BookViewSetTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.user = User.objects.create(username='testuser')
+        self.user = User.objects.create_superuser(email='testuser', password="testpas1!")
         self.book = Book.objects.create(
             title='Test Book',
             author='Test Author',
@@ -44,7 +46,6 @@ class BookViewSetTest(TestCase):
         force_authenticate(request, user=self.user)
 
         response = self.view(request, pk=self.book.id)
-        print(response.data)
         self.assertEqual(response.status_code, 200)
 
         updated_book = Book.objects.get(id=self.book.id)
