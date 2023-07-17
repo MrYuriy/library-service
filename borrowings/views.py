@@ -36,7 +36,9 @@ class BookViewset(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def return_book(self, request, pk=None):
         borrowing = Borrowing.objects.get(id=pk)
-        if borrowing.actual_return_date is None:
+        if borrowing.user != self.request.user:
+            return Response({"message": "It's not your borrowing"}, status=400)
+        if borrowing.actual_return_date is None :
             borrowing.actual_return_date = date.today()
             borrowing.save()
             borrowing.book.inventory += 1
@@ -48,8 +50,8 @@ class BookViewset(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         user_id = self.request.GET.get("user_id")
         is_active = self.request.GET.get("is_active")
-
-        if not self.request.user.is_staff():
+    
+        if not self.request.user.is_staff:
             queryset = queryset.filter(user=self.request.user)
 
         if user_id :
@@ -60,5 +62,4 @@ class BookViewset(viewsets.ModelViewSet):
                 queryset = queryset.filter(actual_return_date__isnull=True)
             if is_active.lower() == "false":
                 queryset = queryset.filter(actual_return_date__isnull=False)
-
         return queryset

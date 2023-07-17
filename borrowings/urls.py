@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from borrowings.views import BookViewset
 
 router = DefaultRouter()
-router.register(r'books', BookViewset)
+router.register(r'', BookViewset)
 
 urlpatterns = [
     path('', include(router.urls)),
