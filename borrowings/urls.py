@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from borrowings.views import BorrovingViewset
 
 router = DefaultRouter()
-router.register(r'', BorrovingViewset)
+router.register(r'', BorrovingViewset, basename="borrowing")
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -16,7 +16,7 @@ class BookViewSetTest(TestCase):
         self.book = Book.objects.create(
             title='Test Book',
             author='Test Author',
-            cover='HARDCOVER',
+            cover='HARD',
             inventory=10,
             dayly_fee='9.99',
         )
@@ -41,7 +41,7 @@ class BookViewSetTest(TestCase):
             'inventory': 5,
             'dayly_fee': '7.99',
         }
-        
+
         request = self.factory.put(f'{self.url}{self.book.id}/', data=json.dumps(data), content_type='application/json')
         force_authenticate(request, user=self.user)
 

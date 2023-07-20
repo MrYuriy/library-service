@@ -1,4 +1,4 @@
-from django.shortcuts import get_list_or_404
+from django.shortcuts import get_object_or_404
 from borrowings.serializers import BorrowingSerializer, BorrowingDetailSerializer
 from rest_framework import viewsets
 from borrowings.models import Borrowing
@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from datetime import date
+from django.db import transaction
 
 class BorrovingViewset(viewsets.ModelViewSet):
     queryset = Borrowing.objects.all()
@@ -14,24 +15,25 @@ class BorrovingViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
+
         book_id = request.data.get("book_id")
         # user_id = request.user.id
         extend_return_date = request.data.get("extend_return_date")
-        book = get_list_or_404(Book, id=book_id)
-
+        book = get_object_or_404(Book, id=book_id)
         if book.inventory > 0:
-            borrowing = Borrowing.objects.create(
-                extend_return_date = extend_return_date,
-                user = request.user,
-                book = book
-            )
-            book.inventory -= 1
-            book.save()
-            serializer = self.get_serializer(borrowing)
-            return Response(serializer.data)
+            with transaction.atomic():
+                borrowing = Borrowing.objects.create(
+                    extend_return_date = extend_return_date,
+                    user = request.user,
+                    book = book
+                )
+                book.inventory -= 1
+                book.save()
+                serializer = self.get_serializer(borrowing)
+                return Response(serializer.data)
 
         else:
-            return Response({"mrssage": "Book is out of stock"}, status=400)
+            return Response({"message": "Book is out of stock"}, status=400)
 
     @action(detail=True, methods=["post"])
     def return_book(self, request, pk=None):
