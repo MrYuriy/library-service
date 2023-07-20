@@ -1,5 +1,5 @@
 from django.shortcuts import get_list_or_404
-from borrowings.serializers import BorrowingSerializer
+from borrowings.serializers import BorrowingSerializer, BorrowingDetailSerializer
 from rest_framework import viewsets
 from borrowings.models import Borrowing
 from books.models import Book
@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from datetime import date
 
-class BookViewset(viewsets.ModelViewSet):
+class BorrovingViewset(viewsets.ModelViewSet):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
@@ -63,3 +63,9 @@ class BookViewset(viewsets.ModelViewSet):
             if is_active.lower() == "false":
                 queryset = queryset.filter(actual_return_date__isnull=False)
         return queryset
+    
+    def retrieve(self, request, *args, **kwargs):
+        # Викликаємо метод get_object() для отримання конкретного об'єкту Borrowing за id
+        instance = self.get_object()
+        serializer = BorrowingDetailSerializer(instance)
+        return Response(serializer.data)
