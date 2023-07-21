@@ -5,25 +5,26 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer class to serialize CustomUser model.
     """
-    
+
     class Meta:
         model = User
         fields = ("id", "username", "email")
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
     Serializer class to serialize registration requests and create a new user.
     """
+
     password = serializers.CharField(
-        max_length=128,
-        min_length=8,
-        write_only=True,
-        style={"input_type": "password"}
+        max_length=128, min_length=8, write_only=True, style={"input_type": "password"}
     )
+
     class Meta:
         model = User
         fields = ("id", "username", "email", "password")

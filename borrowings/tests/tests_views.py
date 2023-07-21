@@ -10,34 +10,31 @@ from rest_framework import status
 
 User = get_user_model()
 
+
 class BorrovinViewSetTest(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.admin_user = User.objects.create_superuser(
-            username="testadminuser",
-            email="admin-user@email.com",
-            password="testpas1!"
+            username="testadminuser", email="admin-user@email.com", password="testpas1!"
         )
         self.user = User.objects.create_user(
-            username="testuser",
-            email="user@email.com",
-            password="testpas1!"
+            username="testuser", email="user@email.com", password="testpas1!"
         )
 
         self.first_book = Book.objects.create(
-            title='Test Book 1',
-            author='Test Author',
-            cover='HARDCOVER',
+            title="Test Book 1",
+            author="Test Author",
+            cover="HARDCOVER",
             inventory=10,
-            dayly_fee='9.99',
+            dayly_fee="9.99",
         )
 
         self.second_book = Book.objects.create(
-            title='Test Book 2',
-            author='Test Author',
-            cover='SOFT',
+            title="Test Book 2",
+            author="Test Author",
+            cover="SOFT",
             inventory=10,
-            dayly_fee='9.99',
+            dayly_fee="9.99",
         )
 
         self.borrowing = Borrowing.objects.create(
@@ -57,11 +54,15 @@ class BorrovinViewSetTest(TestCase):
             "extend_return_date": str(date.today() + timedelta(days=2)),
             "book_id": self.first_book.id,
         }
-        response = self.client.post("/borrowings/", data=json.dumps(data), content_type='application/json')
+        response = self.client.post(
+            "/borrowings/", data=json.dumps(data), content_type="application/json"
+        )
         self.first_book.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Borrowing.objects.get(id=response.data["id"]).user.email, "user@email.com")
+        self.assertEqual(
+            Borrowing.objects.get(id=response.data["id"]).user.email, "user@email.com"
+        )
         self.assertEqual(self.first_book.inventory, 9)
 
     def test_inventory_after_returning(self):
@@ -69,13 +70,13 @@ class BorrovinViewSetTest(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=token)
         initial_inventory = self.first_book.inventory
         response = self.client.post(
-            "/borrowings/", 
+            "/borrowings/",
             data={
-                "book_id": self.first_book.id, 
-                "extend_return_date": str(date.today() + timedelta(days=2))
-                }
-            )
-        
+                "book_id": self.first_book.id,
+                "extend_return_date": str(date.today() + timedelta(days=2)),
+            },
+        )
+
         borrowing_id = response.data["id"]
         self.client.post(f"/borrowings/{borrowing_id}/return/")
         self.first_book.refresh_from_db()
@@ -86,5 +87,5 @@ class BorrovinViewSetTest(TestCase):
     def test_get_active_borrowing(self):
         token = self.get_auth_token(self.admin_user)
         self.client.credentials(HTTP_AUTHORIZATION=token)
-        response = self.client.get(f"/borrowings/?is_active=true")
+        response = self.client.get("/borrowings/?is_active=true")
         self.assertIsNotNone(response.data[0]["id"])

@@ -4,8 +4,8 @@ from django.test import TestCase
 
 User = get_user_model()
 
-class UserModelTests(TestCase):
 
+class UserModelTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser",
@@ -19,7 +19,6 @@ class UserModelTests(TestCase):
         self.assertTrue(self.user.check_password("testpass1!"))
         self.assertFalse(self.user.is_staff)
         self.assertFalse(self.user.is_superuser)
-
 
     def test_create_superuser(self):
         admin_user = User.objects.create_superuser(

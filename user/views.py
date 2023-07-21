@@ -29,6 +29,7 @@ class UserRegistrationAPIView(GenericAPIView):
         data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
         return Response(data, status=status.HTTP_201_CREATED)
 
+
 class UserLoginAPIView(GenericAPIView):
     """
     An endpoint to authenticate existing users using their email and password.
@@ -47,6 +48,7 @@ class UserLoginAPIView(GenericAPIView):
         data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
         return Response(data, status=status.HTTP_200_OK)
 
+
 class UserLogoutAPIView(GenericAPIView):
     """
     An endpoint to logout users.
@@ -56,14 +58,17 @@ class UserLogoutAPIView(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
-
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
 
             token.blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"error": str(error)}
+            )
+
 
 class UserAPIView(RetrieveUpdateAPIView):
     """

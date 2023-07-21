@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 User = get_user_model()
 
+
 class UserRegistrationAPIViewTest(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -16,7 +17,7 @@ class UserRegistrationAPIViewTest(TestCase):
         data = {
             "username": "testuser",
             "email": "test@example.com",
-            "password": "testpassword"
+            "password": "testpassword",
         }
         response = self.client.post(self.registration_url, data, format="json")
 
@@ -28,7 +29,7 @@ class UserRegistrationAPIViewTest(TestCase):
         data = {
             "username": "testuser",
             "email": "invalid-email",
-            "password": "testpassword"
+            "password": "testpassword",
         }
         response = self.client.post(self.registration_url, data, format="json")
 
@@ -39,9 +40,7 @@ class UserRegistrationAPIViewTest(TestCase):
 class UserLoginAPIViewTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="testpassword"
+            username="testuser", email="test@example.com", password="testpassword"
         )
         self.client = APIClient()
         self.login_url = reverse("user:login-user")
@@ -69,18 +68,20 @@ class UserLogoutAPIViewTest(TestCase):
         self.logout_url = reverse("user:logout-user")
 
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="testpassword"
+            username="testuser", email="test@example.com", password="testpassword"
         )
 
         self.refresh_token = RefreshToken.for_user(self.user)
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.refresh_token.access_token}")
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {self.refresh_token.access_token}"
+        )
 
     def test_user_logout_success(self):
-         response = self.client.post(self.logout_url, {"refresh": str(self.refresh_token)})
+        response = self.client.post(
+            self.logout_url, {"refresh": str(self.refresh_token)}
+        )
 
-         self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
 
     def test_user_logout_no_token(self):
         response = self.client.post(self.logout_url)
@@ -91,9 +92,7 @@ class UserLogoutAPIViewTest(TestCase):
 class UserAPIViewTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username="testuser",
-            email="test@example.com",
-            password="testpassword"
+            username="testuser", email="test@example.com", password="testpassword"
         )
         self.client = APIClient()
         self.user_url = reverse("user:user-info")

@@ -2,17 +2,18 @@ from django.db import models
 from enum import Enum
 from django.core.validators import MinValueValidator
 
+
 class BookCover(Enum):
     HARD = "HARD"
     SOFT = "SOFT"
+
 
 class Book(models.Model):
     title = models.CharField(max_length=255, unique=True)
     author = models.CharField(max_length=255)
     cover = models.CharField(
-        max_length=10, 
-        choices=[(cover.name, cover.value) for cover in BookCover]
-        )
+        max_length=10, choices=[(cover.name, cover.value) for cover in BookCover]
+    )
     inventory = models.IntegerField(validators=[MinValueValidator(0)])
     dayly_fee = models.DecimalField(max_digits=8, decimal_places=2)
 

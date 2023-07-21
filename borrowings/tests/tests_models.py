@@ -7,6 +7,7 @@ from library_service import settings
 
 User = get_user_model()
 
+
 class BorrowingModelTest(TestCase):
     def setUp(self):
         self.book = Book.objects.create(
@@ -24,14 +25,16 @@ class BorrowingModelTest(TestCase):
         )
 
         self.borrowing = Borrowing.objects.create(
-            extend_return_date = date.today() + timedelta(days=2),
-            book = self.book,
-            user = self.user,
+            extend_return_date=date.today() + timedelta(days=2),
+            book=self.book,
+            user=self.user,
         )
 
     def test_string_representation(self):
         borrowing = self.borrowing
-        extend_repr = f"Borrowing: {borrowing.book.title} by User: {borrowing.user.email}"
+        extend_repr = (
+            f"Borrowing: {borrowing.book.title} by User: {borrowing.user.email}"
+        )
         self.assertEqual(str(borrowing), extend_repr)
 
     def test_borrow_date_auto_now_add(self):

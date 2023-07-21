@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
+
 @admin.register(User)
 class UserAdmin(UserAdmin):
     model = User
