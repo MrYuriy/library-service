@@ -17,3 +17,19 @@ To overcome these problems, we will develop an online system that allows users t
 books, make payments, and receive notifications. 
 The system will enable administrators to manage books, track borrowings, and
 receive updates about new borrowings, overdue books, and successful payments.
+
+## Features
+
+* JWT authenticated.
+* Admin panel /admin/
+* Documentation at /api/doc/swagger/
+* Books inventory management.
+* Books borrowing management.
+* Notifications service through Telegram API (bot and chat).
+* Scheduled notifications with Django Q and Redis.
+* Payments handle with Stripe API.
+
+## Getting access
+
+* create user via /api/users/
+* get access token via /api/users/token/
