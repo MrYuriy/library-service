@@ -15,7 +15,6 @@ class BorrowingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, request, *args, **kwargs):
-        print("!!!!!!!!!!")
         book_id = request.data.get("book_id")
         
         # user_id = request.user.id

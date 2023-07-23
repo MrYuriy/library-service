@@ -1,6 +1,15 @@
-from telegram import Bot
+from telebot import TeleBot
 from library_service import settings
 
-async def send_telegram_notification(message):
-    bot = Bot(token=settings.TG_BOT_TOKEN)
-    await bot.send_message(chat_id=settings.TG_CHAT_ID, text=message)
+BOT_TOKEN = settings.TG_BOT_TOKEN
+CHAT_ID = settings.TG_CHAT_ID
+
+bot = TeleBot(BOT_TOKEN)
+
+
+@bot.message_handler(commands=["start"])
+def handle_start(message):
+    bot.reply_to(message, "Bot has started!")
+
+
+bot.polling()
