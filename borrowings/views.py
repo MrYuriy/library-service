@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from datetime import date
 from django.db import transaction
-from telegram_bot.bot_send_message import send_telegram_message_when_borrowing
+from borrowings.tasks import send_telegram_message_when_borrowing
 
 
 class BorrovingViewset(viewsets.ModelViewSet):
@@ -30,7 +30,7 @@ class BorrovingViewset(viewsets.ModelViewSet):
                 book.save()
                 serializer = self.get_serializer(borrowing)
                 message = f"New borrowing created: {borrowing.book.title} by {borrowing.user.email}"
-                send_telegram_message_when_borrowing(message)
+                send_telegram_message_when_borrowing.delay(message)
                 return Response(serializer.data)
 
         else:
