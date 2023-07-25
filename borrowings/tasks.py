@@ -9,6 +9,6 @@ CHAT_ID = settings.TG_CHAT_ID
 
 
 @shared_task
-def send_telegram_message_when_borrowing(message):
+def send_telegram_message(message):
     bot = telebot.TeleBot(BOT_TOKEN)
     bot.send_message(chat_id=CHAT_ID, text=message)
