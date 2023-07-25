@@ -5,9 +5,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-from .models import Payment
-from .permissions import IsAdminOrSelf
-from .serializers import PaymentSerializer
+from payments.models import Payment
+from payments.permissions import IsAdminOrSelf
+from payments.serializers import PaymentSerializer
 
 
 class PaymentList(generics.ListCreateAPIView):
