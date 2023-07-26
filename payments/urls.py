@@ -8,15 +8,15 @@ from .views import (
 )
 
 urlpatterns = [
-    path("payments/", PaymentList.as_view(), name="payment_list"),
-    path("payments/<int:pk>/", PaymentDetail.as_view(), name="payment_detail"),
+    path("", PaymentList.as_view(), name="payment_list"),
+    path("<int:pk>/", PaymentDetail.as_view(), name="payment_detail"),
     path(
-        "payments/<int:pk>/create-stripe-session/",
+        "<int:pk>/create-stripe-session/",
         create_stripe_session,
         name="create_stripe_session",
     ),
-    path("payments/success/", payment_success, name="payment_success"),
-    path("payments/cancel/", payment_cancel, name="payment_cancel"),
+    path("success/", payment_success, name="payment_success"),
+    path("cancel/", payment_cancel, name="payment_cancel"),
 ]
 
 app_name = "payments"

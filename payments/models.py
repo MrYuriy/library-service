@@ -27,13 +27,13 @@ class Payment(models.Model):
     type = models.CharField(
         max_length=7, choices=[(type.name, type.value) for type in PaymentType]
     )
-    borroving = models.ForeignKey(
-        Borrowing, on_delete=models.CASCADE, related_name="payments"
+    borrowing = models.ForeignKey(
+        to=Borrowing, on_delete=models.CASCADE, related_name="payments"
     )
     stripe_sesion_url = models.TextField(
         validators=[URLValidator()], null=True, blank=True
     )
-    stripe_sesion_id = models.CharField(max_length=255, null=True, blank=True)
+    stripe_session_id = models.CharField(max_length=255, null=True, blank=True)
 
     @property
     def money_to_pay(self):
