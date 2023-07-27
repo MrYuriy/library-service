@@ -2,12 +2,12 @@ from django.db import models
 from enum import Enum
 from django.core.validators import URLValidator
 from borrowings.models import Borrowing
-from _decimal import Decimal, ROUND_HALF_EVEN
+from _decimal import Decimal
 import os
 import stripe
 from rest_framework.exceptions import ValidationError
 
-FINE_MULTIPLIER = 1.5
+FINE_MULTIPLIER = 2
 
 
 class PaymentStatus(Enum):
@@ -30,7 +30,7 @@ class Payment(models.Model):
     borrowing = models.ForeignKey(
         to=Borrowing, on_delete=models.CASCADE, related_name="payments"
     )
-    stripe_sesion_url = models.TextField(
+    stripe_session_url = models.TextField(
         validators=[URLValidator()], null=True, blank=True
     )
     stripe_session_id = models.CharField(max_length=255, null=True, blank=True)
@@ -60,11 +60,7 @@ class Payment(models.Model):
                     "product_data": {
                         "name": f"{self.type} for {self.borrowing.book.title}",
                     },
-                    "unit_amount": Decimal(
-                        self.money_to_pay.quantize(
-                            Decimal("0.01"), roundind=ROUND_HALF_EVEN
-                        )
-                    ),
+                    "unit_amount": int(self.money_to_pay * 100)
                 },
                 "quantity": 1,
             }
