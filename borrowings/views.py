@@ -9,6 +9,15 @@ from rest_framework.decorators import action
 from datetime import date
 from django.db import transaction
 from borrowings.tasks import send_telegram_message
+from payments.utils import create_payment_and_stripe_session
+from library_service import settings
+from rest_framework import status
+
+
+SUCCESS_URL = (
+    f"{settings.DOMAIN_URL}/payments/success?session_id={{CHECKOUT_SESSION_ID}}"
+)
+CANCEL_URL = f"{settings.DOMAIN_URL}/payments/cancel?session_id={{CHECKOUT_SESSION_ID}}"
 
 
 class BorrovingViewset(viewsets.ModelViewSet):
@@ -42,11 +51,35 @@ class BorrovingViewset(viewsets.ModelViewSet):
         if borrowing.user != self.request.user:
             return Response({"message": "It's not your borrowing"}, status=400)
         if borrowing.actual_return_date is None:
-            borrowing.actual_return_date = date.today()
-            borrowing.save()
-            borrowing.book.inventory += 1
-            borrowing.book.save()
-            return Response({"message": "Borrowing returned successfully"}, status=200)
+            with transaction.atomic():
+                borrowing.actual_return_date = date.today()
+                borrowing.save()
+                borrowing.book.inventory += 1
+                borrowing.book.save()
+
+                _payment_type = None
+                _message = ""
+                if borrowing.actual_return_date > borrowing.extend_return_date:
+                    _payment_type = "FINE"
+                    _message = "Your borrowing was overdue. You`ll have to pay fine."
+                else:
+                    _payment_type = "PAYMENT"
+                    _message = "Thank you for the timely return of the book"
+
+                payment = create_payment_and_stripe_session(
+                        borrowing,
+                        success_url=SUCCESS_URL,
+                        cancel_url=CANCEL_URL,
+                        payment_type=_payment_type,
+                    )
+                return Response(
+                        {
+                            "success": "The book was successfully returned.",
+                            "message": _message,
+                            "link": f"Pay here: {payment.stripe_session_url}"
+                        },
+                        status=status.HTTP_200_OK,
+                    )
         return Response({"message": "Borrowing already returned"}, status=400)
 
     def get_queryset(self):
@@ -68,7 +101,6 @@ class BorrovingViewset(viewsets.ModelViewSet):
         return queryset
 
     def retrieve(self, request, *args, **kwargs):
-        # Викликаємо метод get_object() для отримання конкретного об'єкту Borrowing за id
         instance = self.get_object()
         serializer = BorrowingDetailSerializer(instance)
         return Response(serializer.data)
