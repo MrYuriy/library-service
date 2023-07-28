@@ -10,7 +10,7 @@ class BookSerializerTest(TestCase):
             "author": "Test Author",
             "cover": "HARD",
             "inventory": 10,
-            "dayly_fee": Decimal("9.99"),
+            "daily_fee": Decimal("9.99"),
         }
 
     def test_create_book(self):
@@ -22,4 +22,4 @@ class BookSerializerTest(TestCase):
         self.assertEqual(book.author, "Test Author")
         self.assertEqual(book.cover, "HARD")
         self.assertEqual(book.inventory, 10)
-        self.assertEqual(book.dayly_fee, Decimal("9.99"))
+        self.assertEqual(book.daily_fee, Decimal("9.99"))

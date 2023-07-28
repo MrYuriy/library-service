@@ -21,7 +21,7 @@ class BookViewSetTest(TestCase):
             author="Test Author",
             cover="HARD",
             inventory=10,
-            dayly_fee="9.99",
+            daily_fee="9.99",
         )
         self.view = BookViewSet.as_view(
             {
@@ -49,7 +49,7 @@ class BookViewSetTest(TestCase):
             "author": "Updated Author",
             "cover": "HARD",
             "inventory": 5,
-            "dayly_fee": "7.99",
+            "daily_fee": "7.99",
         }
 
         request = self.factory.put(
@@ -67,7 +67,7 @@ class BookViewSetTest(TestCase):
         self.assertEqual(updated_book.author, "Updated Author")
         self.assertEqual(updated_book.cover, "HARD")
         self.assertEqual(updated_book.inventory, 5)
-        self.assertEqual(updated_book.dayly_fee, Decimal("7.99"))
+        self.assertEqual(updated_book.daily_fee, Decimal("7.99"))
 
     def test_book_delete(self):
         request = self.factory.delete(f"{self.url}{self.book.id}/")

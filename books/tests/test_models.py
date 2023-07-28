@@ -11,7 +11,7 @@ class BookModelTest(TestCase):
             author="Test Author",
             cover="HARD",
             inventory=10,
-            dayly_fee=9.99,
+            daily_fee=9.99,
         )
 
     def test_book_str_method(self):
@@ -23,7 +23,7 @@ class BookModelTest(TestCase):
             author="Another Author",
             cover="HARD",
             inventory=5,
-            dayly_fee=7.99,
+            daily_fee=7.99,
         )
         with self.assertRaises(ValidationError):
             duplicate_book.full_clean()
@@ -34,7 +34,7 @@ class BookModelTest(TestCase):
             author="Invalid Author",
             cover="SOFT",
             inventory=-5,
-            dayly_fee=4.99,
+            daily_fee=4.99,
         )
         with self.assertRaises(ValidationError):
             invalid_book.full_clean()

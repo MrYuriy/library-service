@@ -11,6 +11,9 @@ from payments.serializers import PaymentSerializer
 
 
 class PaymentList(generics.ListCreateAPIView):
+    """
+    View for listing and creating Payment objects
+    """
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -22,6 +25,9 @@ class PaymentList(generics.ListCreateAPIView):
 
 
 class PaymentDetail(generics.RetrieveAPIView):
+    """
+    View for retrieving a single Payment object
+    """
     serializer_class = PaymentSerializer
     permission_classes = (permissions.IsAuthenticated, IsAdminOrSelf)
 
@@ -33,6 +39,9 @@ class PaymentDetail(generics.RetrieveAPIView):
 
 @api_view(["POST"])
 def create_stripe_session(request, pk):
+    """
+    API view for creating a Stripe session for payment processing
+    """
     try:
         payment = Payment.objects.get(pk=pk)
     except Payment.DoesNotExist:
@@ -62,6 +71,9 @@ def create_stripe_session(request, pk):
 
 @api_view(["GET"])
 def payment_success(request):
+    """
+    API view for handling successful payments
+    """
     session_id = request.GET.get("session_id")
     if session_id:
         payment = Payment.objects.get(stripe_session_id=session_id)
@@ -77,6 +89,9 @@ def payment_success(request):
 
 @api_view(["GET", "POST"])
 def payment_cancel(request):
+    """
+    Retrieve the session ID from the query parameters
+    """
     session_id = request.GET.get("session_id")
     if session_id:
         return Response(

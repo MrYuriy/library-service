@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                         validators=[django.core.validators.MaxValueValidator(0)]
                     ),
                 ),
-                ("dayly_fee", models.DecimalField(decimal_places=2, max_digits=8)),
+                ("daily_fee", models.DecimalField(decimal_places=2, max_digits=8)),
             ],
         ),
     ]

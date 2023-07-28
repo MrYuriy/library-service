@@ -26,7 +26,7 @@ class BorrovinViewSetTest(TestCase):
             author="Test Author",
             cover="HARDCOVER",
             inventory=10,
-            dayly_fee="9.99",
+            daily_fee="9.99",
         )
 
         self.second_book = Book.objects.create(
@@ -34,7 +34,7 @@ class BorrovinViewSetTest(TestCase):
             author="Test Author",
             cover="SOFT",
             inventory=10,
-            dayly_fee="9.99",
+            daily_fee="9.99",
         )
 
         self.borrowing = Borrowing.objects.create(

@@ -12,6 +12,8 @@ from borrowings.tasks import send_telegram_message
 from payments.utils import create_payment_and_stripe_session
 from library_service import settings
 from rest_framework import status
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 SUCCESS_URL = (
@@ -21,6 +23,9 @@ CANCEL_URL = f"{settings.DOMAIN_URL}/payments/cancel?session_id={{CHECKOUT_SESSI
 
 
 class BorrovingViewset(viewsets.ModelViewSet):
+    """
+    Define the Borrowing ViewSet
+    """
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
@@ -39,7 +44,7 @@ class BorrovingViewset(viewsets.ModelViewSet):
                 book.save()
                 serializer = self.get_serializer(borrowing)
                 message = f"New borrowing created: {borrowing.book.title} by {borrowing.user.email}"
-                send_telegram_message.delay(message)
+                #send_telegram_message.delay(message)
                 return Response(serializer.data)
 
         else:
@@ -47,6 +52,9 @@ class BorrovingViewset(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def return_book(self, request, pk=None):
+        """
+        Custom action to handle returning a borrowed book
+        """
         borrowing = Borrowing.objects.get(id=pk)
         if borrowing.user != self.request.user:
             return Response({"message": "It's not your borrowing"}, status=400)
@@ -104,3 +112,20 @@ class BorrovingViewset(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = BorrowingDetailSerializer(instance)
         return Response(serializer.data)
+    
+    @extend_schema(
+            parameters=[
+                OpenApiParameter(
+                    "is_active",
+                    type=OpenApiTypes.BOOL,
+                    description="Filter if books already returned or not (ex. ?is_active=True)",
+                ),
+                OpenApiParameter(
+                    "user_id",
+                    type=OpenApiTypes.INT,
+                    description="If user is admin he can filter by user id (ex. ?user_id=1)",
+                ),
+            ]
+        )
+    def list(self, request, *args, **kwargs):
+            return super().list(self, request, *args, **kwargs)

@@ -21,7 +21,7 @@ class BorrowingSerializerTest(TestCase):
             author="Test Author",
             cover="HARD",
             inventory=10,
-            dayly_fee="9.99",
+            daily_fee="9.99",
         )
         self.borrowing = Borrowing.objects.create(
             extend_return_date="2023-07-20", book=self.book, user=self.user
@@ -51,7 +51,7 @@ class BorrowingDetailSerializerTest(TestCase):
             author="Test Author",
             cover="HARDCOVER",
             inventory=10,
-            dayly_fee="9.99",
+            daily_fee="9.99",
         )
         self.borrowing = Borrowing.objects.create(
             extend_return_date="2023-07-20", book=self.book, user=self.user

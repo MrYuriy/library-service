@@ -15,7 +15,7 @@ class BorrowingModelTest(TestCase):
             author="Test Author",
             cover="HARD",
             inventory=10,
-            dayly_fee=9.99,
+            daily_fee=9.99,
         )
 
         self.user = User.objects.create_user(

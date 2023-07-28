@@ -15,7 +15,7 @@ class Book(models.Model):
         max_length=10, choices=[(cover.name, cover.value) for cover in BookCover]
     )
     inventory = models.IntegerField(validators=[MinValueValidator(0)])
-    dayly_fee = models.DecimalField(max_digits=8, decimal_places=2)
+    daily_fee = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self) -> str:
         return self.title
