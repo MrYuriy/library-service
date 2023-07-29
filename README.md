@@ -33,3 +33,21 @@ receive updates about new borrowings, overdue books, and successful payments.
 
 * create user via /api/users/
 * get access token via /api/users/token/
+
+
+## Getting access
+
+* create user via /api/users/
+* get access token via /api/users/token/
+
+## How to run with Docker
+
+Docker should be installed.
+
+Create `.env` file with your variables (look at `.env.sample`
+file, don't change `POSTGRES_DB` and `POSTGRES_HOST`).
+
+```shell
+docker-compose build
+docker-compose up
+```
