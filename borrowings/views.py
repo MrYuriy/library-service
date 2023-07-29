@@ -44,7 +44,7 @@ class BorrovingViewset(viewsets.ModelViewSet):
                 book.save()
                 serializer = self.get_serializer(borrowing)
                 message = f"New borrowing created: {borrowing.book.title} by {borrowing.user.email}"
-                #send_telegram_message.delay(message)
+                send_telegram_message.delay(message)
                 return Response(serializer.data)
 
         else:
@@ -80,6 +80,7 @@ class BorrovingViewset(viewsets.ModelViewSet):
                         cancel_url=CANCEL_URL,
                         payment_type=_payment_type,
                     )
+                send_telegram_message.delay(f"{borrowing.user} successful payment for {borrowing.book}")
                 return Response(
                         {
                             "success": "The book was successfully returned.",
