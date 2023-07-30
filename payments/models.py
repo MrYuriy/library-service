@@ -1,21 +1,21 @@
-from django.db import models
-from enum import Enum
-from django.core.validators import URLValidator
-from borrowings.models import Borrowing
-from _decimal import Decimal
 import os
+from enum import Enum
+
 import stripe
+from _decimal import Decimal
+from django.core.validators import URLValidator
+from django.db import models
 from rest_framework.exceptions import ValidationError
+
+from borrowings.models import Borrowing
 
 FINE_MULTIPLIER = 2
 
 
 class Payment(models.Model):
-
     class PaymentStatus(Enum):
         PENDING = "PENDING"
         PAID = "PAID"
-
 
     class PaymentType(Enum):
         PAYMENT = "PAYMENT"
@@ -39,17 +39,17 @@ class Payment(models.Model):
     def money_to_pay(self) -> Decimal:
         if self.type == "PAYMENT":
             days_borrowed = (
-                self.borroving.extend_return_date - self.borroving.borrow_date
+                    self.borroving.extend_return_date - self.borroving.borrow_date
             ).days
             return Decimal(days_borrowed) * self.borroving.book.daily_fee
         if self.type == "FINE" and self.borroving.actual_return_date:
             day_overdue = (
-                self.borroving.actual_return_date - self.borroving.extend_return_date
+                    self.borroving.actual_return_date - self.borroving.extend_return_date
             ).days
         return (
-            Decimal(day_overdue)
-            * self.borroving.book.daily_fee
-            * Decimal(FINE_MULTIPLIER)
+                Decimal(day_overdue)
+                * self.borroving.book.daily_fee
+                * Decimal(FINE_MULTIPLIER)
         )
 
     def create_stripe_session(self, success_url, cancel_url):
@@ -97,6 +97,7 @@ class Payment(models.Model):
                     "type": f"A payment with type '{self.type}' already exists for this borrowing."
                 }
             )
+
     def save(self, *args, **kwargs):
         self.validate_unique()
         super().save(*args, **kwargs)

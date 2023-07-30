@@ -1,8 +1,9 @@
-from books.models import Book
 from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
-from books.serializers import BookSerializer
+
+from books.models import Book
 from books.permissions import IsBookAdminOrReadOnly
+from books.serializers import BookSerializer
 
 
 class BookViewSet(ModelViewSet):
@@ -12,6 +13,6 @@ class BookViewSet(ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         IsBookAdminOrReadOnly,
-        ]
+    ]
     queryset = Book.objects.all()
     serializer_class = BookSerializer

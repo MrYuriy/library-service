@@ -1,20 +1,21 @@
+from datetime import date
+
+from django.db import transaction
 from django.shortcuts import get_object_or_404
-from borrowings.serializers import BorrowingSerializer, BorrowingDetailSerializer
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework import status
 from rest_framework import viewsets
-from borrowings.models import Borrowing
-from books.models import Book
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from datetime import date
-from django.db import transaction
-from borrowings.tasks import send_telegram_message
-from payments.utils import create_payment_and_stripe_session
-from library_service import settings
-from rest_framework import status
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
+from books.models import Book
+from borrowings.models import Borrowing
+from borrowings.serializers import BorrowingSerializer, BorrowingDetailSerializer
+from borrowings.tasks import send_telegram_message
+from library_service import settings
+from payments.utils import create_payment_and_stripe_session
 
 SUCCESS_URL = (
     f"{settings.DOMAIN_URL}/payments/success?session_id={{CHECKOUT_SESSION_ID}}"
@@ -75,20 +76,20 @@ class BorrovingViewset(viewsets.ModelViewSet):
                     _message = "Thank you for the timely return of the book"
 
                 payment = create_payment_and_stripe_session(
-                        borrowing,
-                        success_url=SUCCESS_URL,
-                        cancel_url=CANCEL_URL,
-                        payment_type=_payment_type,
-                    )
+                    borrowing,
+                    success_url=SUCCESS_URL,
+                    cancel_url=CANCEL_URL,
+                    payment_type=_payment_type,
+                )
                 send_telegram_message.delay(f"{borrowing.user} successful payment for {borrowing.book}")
                 return Response(
-                        {
-                            "success": "The book was successfully returned.",
-                            "message": _message,
-                            "link": f"Pay here: {payment.stripe_session_url}"
-                        },
-                        status=status.HTTP_200_OK,
-                    )
+                    {
+                        "success": "The book was successfully returned.",
+                        "message": _message,
+                        "link": f"Pay here: {payment.stripe_session_url}"
+                    },
+                    status=status.HTTP_200_OK,
+                )
         return Response({"message": "Borrowing already returned"}, status=400)
 
     def get_queryset(self):
@@ -113,20 +114,20 @@ class BorrovingViewset(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = BorrowingDetailSerializer(instance)
         return Response(serializer.data)
-    
+
     @extend_schema(
-            parameters=[
-                OpenApiParameter(
-                    "is_active",
-                    type=OpenApiTypes.BOOL,
-                    description="Filter if books already returned or not (ex. ?is_active=True)",
-                ),
-                OpenApiParameter(
-                    "user_id",
-                    type=OpenApiTypes.INT,
-                    description="If user is admin he can filter by user id (ex. ?user_id=1)",
-                ),
-            ]
-        )
+        parameters=[
+            OpenApiParameter(
+                "is_active",
+                type=OpenApiTypes.BOOL,
+                description="Filter if books already returned or not (ex. ?is_active=True)",
+            ),
+            OpenApiParameter(
+                "user_id",
+                type=OpenApiTypes.INT,
+                description="If user is admin he can filter by user id (ex. ?user_id=1)",
+            ),
+        ]
+    )
     def list(self, request, *args, **kwargs):
-            return super().list(self, request, *args, **kwargs)
+        return super().list(self, request, *args, **kwargs)

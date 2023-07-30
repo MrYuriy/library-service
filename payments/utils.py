@@ -13,16 +13,16 @@ FINE_MULTIPLIER = 2
 
 def create_payment_and_stripe_session(borrowing, success_url, cancel_url, payment_type) -> Payment:
     if payment_type == "PAYMENT":
-        days_borrowed = borrowing.extend_return_date - borrowing.borrow_date 
+        days_borrowed = borrowing.extend_return_date - borrowing.borrow_date
         money_to_pay = Decimal(days_borrowed.days) * borrowing.book.daily_fee
         payment_type = Payment.PaymentType.PAYMENT
 
     elif payment_type == "FINE":
         days_overdue = (
-            borrowing.actual_return_date - borrowing.expected_return_date
+                borrowing.actual_return_date - borrowing.expected_return_date
         ).days
         money_to_pay = (
-            Decimal(days_overdue) * borrowing.book.daily_fee * FINE_MULTIPLIER
+                Decimal(days_overdue) * borrowing.book.daily_fee * FINE_MULTIPLIER
         )
         payment_type = Payment.PaymentType.FINE
     else:

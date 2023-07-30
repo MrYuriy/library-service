@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
 from borrowings.views import BorrovingViewset
 
 router = DefaultRouter()
@@ -13,6 +14,5 @@ urlpatterns = [
         name="book-return",
     ),
 ]
-
 
 app_name = "borrowings"

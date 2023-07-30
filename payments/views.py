@@ -4,7 +4,6 @@ from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-
 from payments.models import Payment
 from payments.permissions import IsAdminOrSelf
 from payments.serializers import PaymentSerializer
@@ -48,12 +47,12 @@ def create_stripe_session(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     success_url = (
-        request.build_absolute_uri(reverse("payments:payment_success"))
-        + "?session_id={CHECKOUT_SESSION_ID}"
+            request.build_absolute_uri(reverse("payments:payment_success"))
+            + "?session_id={CHECKOUT_SESSION_ID}"
     )
     cancel_url = (
-        request.build_absolute_uri(reverse("payments:payment_cancel"))
-        + "?session_id={CHECKOUT_SESSION_ID}"
+            request.build_absolute_uri(reverse("payments:payment_cancel"))
+            + "?session_id={CHECKOUT_SESSION_ID}"
     )
 
     if not success_url or not cancel_url:
@@ -86,7 +85,6 @@ def payment_success(request):
         )
 
 
-
 @api_view(["GET", "POST"])
 def payment_cancel(request):
     """
@@ -97,7 +95,7 @@ def payment_cancel(request):
         return Response(
             {
                 "message": "Payment was not successful and can be paid later. "
-                "The session is available for 24h."
+                           "The session is available for 24h."
             }
         )
     else:

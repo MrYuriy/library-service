@@ -1,8 +1,7 @@
-from celery import shared_task
-import time
 import telebot
-from library_service import settings
+from celery import shared_task
 
+from library_service import settings
 
 BOT_TOKEN = settings.TG_BOT_TOKEN
 CHAT_ID = settings.TG_CHAT_ID
